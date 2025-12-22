@@ -1,5 +1,6 @@
 package com.myweb.job_portal.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,6 +18,7 @@ public class Companies {
 
     @OneToOne
     @JoinColumn(name = "owner_user_id", nullable = false)
+    @JsonIgnore
     private Users owner;
 
     @Column(name = "owner_name")
@@ -34,7 +36,7 @@ public class Companies {
     @Column(name = "ward_address")
     private String wardAddress;
 
-    @Column(name = "provinnce_address")
+    @Column(name = "province_address")
     private String provinnceAddress;
 
     @Column(name = "website_url", length = 2048)
@@ -51,6 +53,9 @@ public class Companies {
 
     @Column(name = "logo_url", length = 2048)
     private String logoUrl;
+
+    @Column(name = "banner_url", length = 2048)
+    private String bannerUrl;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CompanyProjects> projects = new ArrayList<>();

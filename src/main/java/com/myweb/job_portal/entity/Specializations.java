@@ -1,5 +1,6 @@
 package com.myweb.job_portal.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,6 +22,7 @@ public class Specializations {
 
     @ManyToOne
     @JoinColumn(name = "industry_id", nullable = false)
+    @JsonIgnore
     private Industries industries;
 
     @Column(name = "name", nullable = false)

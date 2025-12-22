@@ -1,5 +1,6 @@
 package com.myweb.job_portal.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.myweb.job_portal.enums.MessageTypeEnum;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,10 +23,12 @@ public class Messages {
 
     @ManyToOne
     @JoinColumn(name = "sender_id")
+    @JsonIgnore
     private Users sender;
 
     @ManyToOne
     @JoinColumn(name = "conversation_id")
+    @JsonIgnore
     private Conversations conversations;
 
     @Column(name = "content", columnDefinition = "TEXT")

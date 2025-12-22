@@ -1,5 +1,6 @@
 package com.myweb.job_portal.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,14 +24,17 @@ public class Reviews {
 
     @OneToOne
     @JoinColumn(name = "job_application_id", nullable = false, unique = true)
+    @JsonIgnore
     private JobApplications jobApplications;
 
     @ManyToOne
     @JoinColumn(name = "reviewer_id", nullable = false)
+    @JsonIgnore
     private Users reviewer;
 
     @ManyToOne
     @JoinColumn(name = "reviewee_id", nullable = false)
+    @JsonIgnore
     private Users reviewee;
 
     @Column(name = "rating")

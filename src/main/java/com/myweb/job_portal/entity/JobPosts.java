@@ -1,5 +1,6 @@
 package com.myweb.job_portal.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,10 +20,12 @@ public class JobPosts {
 
     @ManyToOne
     @JoinColumn(name = "project_id", nullable = false)
+    @JsonIgnore
     private CompanyProjects companyProjects;
 
     @ManyToOne
     @JoinColumn(name = "position_id", nullable = false)
+    @JsonIgnore
     private Positions positions;
 
     @Column(name = "tittle")
