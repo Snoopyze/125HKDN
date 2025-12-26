@@ -19,4 +19,9 @@ public interface CandidateCertificateRepository extends JpaRepository<CandidateC
             "where c.users.id = :userId " +
             "order by c.createdAt desc")
     List<CandidateCertificate> findByUserId(@Param("userId") Long userId);
+
+
+
+    List<CandidateCertificate> findByUsers_Id(Long userId);
+    List<CandidateCertificate> findByJobApplications_Id(Long jobApplicationId);
 }

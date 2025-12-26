@@ -33,4 +33,8 @@ public interface JobApplicationRepository extends JpaRepository<JobApplications,
             "join fetch u.candidateProfile cp " +
             "order by ja.appliedAt desc")
     List<JobApplications> findAllJobApplications();
+
+
+    List<JobApplications> findByUsers_Id(Long userId);
+    List<JobApplications> findByJobPosts_Id(Long jobPostId);
 }

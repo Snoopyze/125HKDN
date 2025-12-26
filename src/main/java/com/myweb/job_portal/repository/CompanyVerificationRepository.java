@@ -17,4 +17,5 @@ public interface CompanyVerificationRepository  extends JpaRepository<CompanyVer
             "where cv.verificationsStatus = :status")
     List<CompanyVerifications> findAllByStatus(@Param("status") VerificationsStatus status);
 
+    List<CompanyVerifications> findByCompany_Id(Long companyId);
 }
