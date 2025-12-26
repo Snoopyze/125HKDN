@@ -25,5 +25,4 @@ public interface UserRepository extends JpaRepository<Users,Long> {
             "left join fetch u.candidateProfile " +
             "left join fetch u.companies")
     List<Users> findAllWithDetails();
-
 }

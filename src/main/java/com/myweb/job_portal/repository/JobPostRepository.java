@@ -27,4 +27,7 @@ public interface JobPostRepository extends JpaRepository<JobPosts,Long> {
                                   @Param("province") String province,
                                   @Param("companyId") Long companyId);
 
+
+    List<JobPosts> findByCompanyProjects_Id(Long projectId);
+    List<JobPosts> findByCompanyProjects_Company_Id(Long companyId);
 }

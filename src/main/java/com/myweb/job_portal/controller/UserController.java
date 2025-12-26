@@ -22,7 +22,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/login")
+    @PostMapping("/user-login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
 
         Users user = userService.login(loginRequest);
