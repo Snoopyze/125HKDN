@@ -23,7 +23,7 @@ public class Reviews {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "job_application_id", nullable = false, unique = true)
+    @JoinColumn(name = "job_application_id", nullable = false)
     @JsonIgnore
     private JobApplications jobApplications;
 
