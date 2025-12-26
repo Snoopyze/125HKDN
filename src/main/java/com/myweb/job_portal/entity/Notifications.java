@@ -1,5 +1,6 @@
 package com.myweb.job_portal.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.apache.catalina.User;
@@ -21,10 +22,12 @@ public class Notifications {
 
     @ManyToOne
     @JoinColumn(name = "recipient_id", nullable = false)
+    @JsonIgnore
     private Users recipient;
 
     @ManyToOne
     @JoinColumn(name = "sender_id", nullable = false)
+    @JsonIgnore
     private Users sender;
 
     @Column(name = "type")

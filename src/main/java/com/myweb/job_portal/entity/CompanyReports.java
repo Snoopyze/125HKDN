@@ -1,5 +1,6 @@
 package com.myweb.job_portal.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.myweb.job_portal.enums.ReportStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,10 +23,12 @@ public class CompanyReports {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private Users users;
 
     @ManyToOne
     @JoinColumn(name = "company_id", nullable = false)
+    @JsonIgnore
     private Companies company;
 
     @Column(name = "description", columnDefinition = "TEXT")

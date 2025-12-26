@@ -1,5 +1,6 @@
 package com.myweb.job_portal.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +23,7 @@ public class Conversations {
 
     @ManyToOne
     @JoinColumn(name = "job_application_id")
+    @JsonIgnore
     private JobApplications jobApplications;
 
     @Column(name = "created_at")

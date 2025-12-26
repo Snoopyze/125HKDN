@@ -1,5 +1,6 @@
 package com.myweb.job_portal.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.myweb.job_portal.enums.ApplicationStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,10 +24,12 @@ public class JobApplications {
 
     @ManyToOne
     @JoinColumn(name = "job_id", nullable = false)
+    @JsonIgnore
     private JobPosts jobPosts;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private Users users;
 
     @Column(name = "cv_url", length = 2048)

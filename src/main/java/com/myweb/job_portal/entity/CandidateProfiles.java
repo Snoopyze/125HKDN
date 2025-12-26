@@ -1,5 +1,6 @@
 package com.myweb.job_portal.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,6 +16,7 @@ public class CandidateProfiles {
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private Users users;
 
     @Column(name = "full_name", nullable = false)
@@ -26,7 +28,7 @@ public class CandidateProfiles {
     @Column(name = "ward_address")
     private String wardAddress;
 
-    @Column(name = "provinnce_address")
+    @Column(name = "province_address")
     private String provinnceAddress;
 
     @Column(name = "avatar_url", length = 2048)

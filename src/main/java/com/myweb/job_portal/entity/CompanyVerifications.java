@@ -1,5 +1,6 @@
 package com.myweb.job_portal.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.myweb.job_portal.enums.ApplicationStatus;
 import com.myweb.job_portal.enums.VerificationsStatus;
 import jakarta.persistence.*;
@@ -19,6 +20,7 @@ public class CompanyVerifications {
 
     @ManyToOne
     @JoinColumn(name = "company_id", nullable = false)
+    @JsonIgnore
     private Companies company;
 
     @Column(name = "tax_code")

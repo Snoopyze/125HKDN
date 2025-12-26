@@ -1,5 +1,6 @@
 package com.myweb.job_portal.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,10 +21,12 @@ public class CandidateCertificate {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private Users users;
 
     @ManyToOne
     @JoinColumn(name = "job_application", nullable = false)
+    @JsonIgnore
     private JobApplications jobApplications;
 
     @Column(name = "certificate_url", length = 2048)
