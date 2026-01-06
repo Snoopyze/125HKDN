@@ -33,20 +33,28 @@ public class UserService {
     @Autowired
     private Cloudinary cloudinary;
 
-    public Users login(LoginRequest request) {
+    public Users login(LoginRequest request, UserRole roles, UserStatus userStatus) {
         Optional<Users> userOptional = userRepository.findByEmailOrPhone(request.getAccount(), request.getAccount());
 
         if (userOptional.isEmpty()) {
-            return null;
+            throw new RuntimeException("Tài khoản không tồn tại!");
         }
 
         Users user = userOptional.get();
 
-        if (user.getPassword().equals(request.getPassword())) {
-            return user;
+        if (!user.getPassword().equals(request.getPassword())) {
+            throw new RuntimeException("Mật khẩu không chính xác!");
         }
 
-        return null;
+        if (!user.getUserRole().equals(roles)) {
+            throw new RuntimeException("Tài khoản này không có quyền truy cập vào giao diện " + roles.name());
+        }
+
+        if(!user.getUserStatus().equals(userStatus)){
+            throw new RuntimeException("Tài khoản của bạn đã bị khóa hoặc chưa kích hoạt!");
+        }
+
+        return user;
     }
 
     @Transactional
