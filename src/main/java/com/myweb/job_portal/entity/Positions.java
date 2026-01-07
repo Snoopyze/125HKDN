@@ -26,6 +26,6 @@ public class Positions {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "positions", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<JobPosts> jobPosts = new ArrayList<>();
+//    @OneToMany(mappedBy = "positions", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<JobPosts> jobPosts = new ArrayList<>();
 }

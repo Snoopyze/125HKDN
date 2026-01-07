@@ -10,10 +10,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<Users,Long> {
+public interface    UserRepository extends JpaRepository<Users,Long> {
 
     Optional<Users> findByEmailOrPhone(String email, String phone);
     Optional<Users> findByEmail(String email);
+
+    @Override
+    Optional<Users> findById(Long aLong);
 
     Boolean existsUsersById(Long userId);
     Boolean existsByEmail(String email);

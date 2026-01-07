@@ -42,14 +42,14 @@ public class JobApplications {
     @Column(name = "applied_at")
     private LocalDateTime appliedAt;
 
-    @OneToMany(mappedBy = "jobApplications", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<CandidateCertificate> candidateCertificates = new ArrayList<>();
-
-    @OneToMany(mappedBy = "jobApplications", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Conversations>  conversations = new ArrayList<>();
-
-    @OneToOne(mappedBy = "jobApplications", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Reviews reviews;
+//    @OneToMany(mappedBy = "jobApplications", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<CandidateCertificate> candidateCertificates = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "jobApplications", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<Conversation>  conversation = new ArrayList<>();
+//
+//    @OneToOne(mappedBy = "jobApplications", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private Reviews reviews;
 
 
 }

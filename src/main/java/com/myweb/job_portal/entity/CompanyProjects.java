@@ -31,6 +31,6 @@ public class CompanyProjects {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "companyProjects", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<JobPosts> jobPosts = new ArrayList<>();
+//    @OneToMany(mappedBy = "companyProjects", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<JobPosts> jobPosts = new ArrayList<>();
 }

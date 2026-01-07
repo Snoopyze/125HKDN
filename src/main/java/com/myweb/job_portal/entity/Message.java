@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.myweb.job_portal.enums.MessageTypeEnum;
 import jakarta.persistence.*;
 import lombok.*;
-import org.apache.catalina.User;
 
-import java.awt.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -16,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Messages {
+public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,7 +27,7 @@ public class Messages {
     @ManyToOne
     @JoinColumn(name = "conversation_id")
     @JsonIgnore
-    private Conversations conversations;
+    private Conversation conversation;
 
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;

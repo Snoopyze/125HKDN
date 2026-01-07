@@ -58,14 +58,15 @@ public class Companies {
     private String bannerUrl;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<CompanyProjects> projects = new ArrayList<>();
-
-
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<CompanyVerifications> verification = new ArrayList<>();
-
-
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<CompanyReports> reports = new ArrayList<>();
+//
+//
+//    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<CompanyVerifications> verification = new ArrayList<>();
+//
+//
+//    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<CompanyReports> reports = new ArrayList<>();
 
 }
