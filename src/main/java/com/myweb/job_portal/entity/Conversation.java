@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Conversations {
+public class Conversation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +32,6 @@ public class Conversations {
     @Column(name = "updated_at")
     private LocalDateTime updateAt = LocalDateTime.now();
 
-    @OneToMany(mappedBy = "conversations", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Messages> messages = new ArrayList<>();
+//    @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<Message> messages = new ArrayList<>();
 }

@@ -29,6 +29,7 @@ public class Specializations {
     private String name;
 
     @OneToMany(mappedBy = "specialization", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Positions> positions = new ArrayList<>();
 
 }

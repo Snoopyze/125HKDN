@@ -41,8 +41,8 @@ public class JobPosts {
     private String jobDescription;
 
 
-    @OneToMany(mappedBy = "jobPosts", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<JobApplications> jobApplications = new ArrayList<>();
+//    @OneToMany(mappedBy = "jobPosts", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<JobApplications> jobApplications = new ArrayList<>();
 
 
 }

@@ -11,7 +11,6 @@ import com.myweb.job_portal.repository.ConversationRepository;
 import com.myweb.job_portal.repository.JobApplicationRepository;
 import com.myweb.job_portal.repository.JobPostRepository;
 import com.myweb.job_portal.repository.UserRepository;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,10 +76,10 @@ public class JobApplicationService {
 
         JobApplications save = jobApplicationRepository.save(jobApplications);
 
-        Conversations conversations = new Conversations();
-        conversations.setJobApplications(save);
+        Conversation conversation = new Conversation();
+        conversation.setJobApplications(save);
 
-        conversationRepository.save(conversations);
+        conversationRepository.save(conversation);
         return save;
     }
 
