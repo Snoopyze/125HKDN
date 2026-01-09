@@ -2,18 +2,30 @@ package com.myweb.job_portal.service;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.myweb.job_portal.dto.request.CandidateRegisterRequest;
 import com.myweb.job_portal.dto.request.ChangePasswordRequest;
+import com.myweb.job_portal.dto.request.CompanyRegisterRequest;
 import com.myweb.job_portal.dto.request.LoginRequest;
 import com.myweb.job_portal.dto.response.UserListResponse;
 import com.myweb.job_portal.entity.CandidateProfiles;
+import com.myweb.job_portal.entity.Companies;
+import com.myweb.job_portal.entity.CompanyVerifications;
 import com.myweb.job_portal.entity.Users;
 import com.myweb.job_portal.enums.UserRole;
 import com.myweb.job_portal.enums.UserStatus;
+import com.myweb.job_portal.enums.VerificationsStatus;
 import com.myweb.job_portal.repository.CandidateProfileRepository;
+import com.myweb.job_portal.repository.CompaniesRepository;
+import com.myweb.job_portal.repository.CompanyVerificationRepository;
 import com.myweb.job_portal.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -22,6 +34,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     @Autowired
@@ -33,16 +46,19 @@ public class UserService {
     @Autowired
     private Cloudinary cloudinary;
 
+    private final PasswordEncoder passwordEncoder;
+    private final CompaniesRepository companiesRepository;
+    private final CompanyVerificationRepository companyVerificationRepository;
+
     public Users login(LoginRequest request, UserRole roles, UserStatus userStatus) {
         Optional<Users> userOptional = userRepository.findByEmailOrPhone(request.getAccount(), request.getAccount());
-
         if (userOptional.isEmpty()) {
             throw new RuntimeException("Tài khoản không tồn tại!");
         }
 
         Users user = userOptional.get();
 
-        if (!user.getPassword().equals(request.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Mật khẩu không chính xác!");
         }
 
@@ -66,19 +82,15 @@ public class UserService {
             throw new RuntimeException("Email nhập vào không khớp với tài khoản này!");
         }
 
-        if(!users.getPassword().equals(request.getCurrentPassword())) {
+        if(!passwordEncoder.matches(request.getCurrentPassword(), users.getPassword())) {
             throw new RuntimeException("Mật khẩu hiện tại không đúng!");
-        }
-
-        if(!request.getNewPassword().equals(request.getConfirmPassword())) {
-            throw new RuntimeException("Mật khẩu xác nhận không khớp!");
         }
 
         if (request.getNewPassword().equals(request.getCurrentPassword())) {
             throw new RuntimeException("Mật khẩu mới không được trùng với mật khẩu cũ!");
         }
 
-        users.setPassword(request.getNewPassword());
+        users.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(users);
     }
 
@@ -90,15 +102,15 @@ public class UserService {
             throw new RuntimeException("Người dùng không tồn tại!");
         }
 
-        String originalFilename = imageFile.getOriginalFilename();
+        String publicId = UUID.randomUUID().toString();
         String imageUrl;
 
         try {
             Map uploadResult = cloudinary.uploader().upload(
                     imageFile.getBytes(),
-                    ObjectUtils.asMap(  "resource_type", "raw",
-                            "folder", "job_applications/images",
-                            "public_id", originalFilename)
+                    ObjectUtils.asMap(  "resource_type", "image",
+                            "folder", "candidate/avatar",
+                            "public_id", publicId)
             );
             imageUrl = uploadResult.get("secure_url").toString();
         }catch (IOException e){
@@ -179,6 +191,102 @@ public class UserService {
         user.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
         return "Đã đổi trạng thái từ " + currentStatus + " sang " + newStatus;
+    }
+
+    public Users registerCandidate(CandidateRegisterRequest request) {
+        Users user = new Users();
+        String inputAccount = request.getAccount();
+
+        if(inputAccount.contains("@")) {
+            if (userRepository.existsByEmail(inputAccount)) {
+                throw new RuntimeException("Email này đã được sử dụng!");
+            }
+            user.setEmail(inputAccount);
+        } else {
+            if (userRepository.existsByPhone(inputAccount)) {
+                throw new RuntimeException("Số điện thoại này đã được sử dụng!");
+            }
+            user.setPhone(inputAccount);
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setUserRole(UserRole.candidate);
+        user.setUserStatus(UserStatus.active);
+        user.setCreatedAt(LocalDateTime.now());
+        user.setGender(request.getGender());
+
+        Users savedUser = userRepository.save(user);
+
+        CandidateProfiles candidateProfiles = new CandidateProfiles();
+        candidateProfiles.setUsers(savedUser);
+        candidateProfiles.setFullName(request.getFullName());
+
+        candidateProfileRepository.save(candidateProfiles);
+
+        return savedUser;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Users registerCompany(CompanyRegisterRequest request, MultipartFile image) {
+        if(!request.getEmail().contains("@")) {
+            throw new RuntimeException("Nhà tuyển dụng phải đăng ký bằng Email hợp lệ!");
+        }
+        if(userRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("Email này đã được sử dụng!");
+        }
+
+        Users user = new Users();
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setUserRole(UserRole.employer);
+        user.setUserStatus(UserStatus.active);
+        user.setCreatedAt(LocalDateTime.now());
+        user.setGender(request.getGender());
+
+        Users savedUser = userRepository.save(user);
+
+        Companies companies = new Companies();
+        companies.setOwner(savedUser);
+        companies.setOwnerName(request.getOwnerName());
+        companies.setLegalName(request.getLegalName());
+        companies.setProvinnceAddress(request.getProvince());
+        companies.setWardAddress(request.getWard());
+        companies.setStreetAddress(request.getStreet());
+        companies.setIndustry(request.getIndustry());
+        companies.setCompanySize(request.getCompanySize());
+
+        Companies companiesSave = companiesRepository.save(companies);
+
+        CompanyVerifications companyVerifications = new CompanyVerifications();
+        companyVerifications.setCompany(companiesSave);
+        companyVerifications.setTaxCode(request.getTaxCode());
+        companyVerifications.setVerificationsStatus(VerificationsStatus.pending);
+
+        MultipartFile imageFile = image;
+        if (imageFile == null || imageFile.isEmpty()) {
+            throw new RuntimeException("File ảnh không được để trống");
+        }
+        String contentType = imageFile.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new RuntimeException("Chỉ cho phép upload file ảnh");
+        }
+        String publicId = UUID.randomUUID().toString();
+        String imageUrl;
+        try {
+            Map uploadResult = cloudinary.uploader().upload(
+                    imageFile.getBytes(),
+                    ObjectUtils.asMap(  "resource_type", "image",
+                            "folder", "company_verifications/license",
+                            "public_id", publicId)
+            );
+            imageUrl = uploadResult.get("secure_url").toString();
+        }catch (IOException e){
+            throw new RuntimeException("Upload fail");
+        }
+
+        companyVerifications.setBusinessLicenseUrl(imageUrl);
+        companyVerificationRepository.save(companyVerifications);
+        return savedUser;
     }
 
 }
