@@ -137,7 +137,9 @@ public class JobApplicationService {
 
 
         }).collect(Collectors.toList());
+    }
 
-
+    public boolean hasApplied(Long userId, Long applicationId) {
+        return jobApplicationRepository.existsByUsers_IdAndJobPosts_Id(userId, applicationId);
     }
 }
