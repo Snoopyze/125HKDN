@@ -10,6 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -38,6 +40,15 @@ public class JobApplicationController {
             @RequestParam(required = false) String status
     ) {
         return  ResponseEntity.ok(jobApplicationService.getApplicationHistory(userId,status));
+    }
+
+    @GetMapping("/check-applied")
+    public ResponseEntity<?> checkApplied(
+            @RequestParam Long userId,
+            @RequestParam Long applicationId
+    ) {
+        boolean hasApplied = jobApplicationService.hasApplied(userId,applicationId);
+        return ResponseEntity.ok(Collections.singletonMap("hasApplied", hasApplied));
     }
 
 }
