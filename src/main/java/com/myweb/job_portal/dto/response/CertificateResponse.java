@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 public class CertificateResponse {
     private Long id;
+    private Long jobPostsId;
     private String certificateUrl;
     private LocalDateTime createdAt;
     private String fullName;

@@ -36,6 +36,7 @@ public class CertificateService {
 
             return CertificateResponse.builder()
                     .id(cert.getId())
+                    .jobPostsId(cert.getJobApplications().getJobPosts().getId())
                     .certificateUrl(cert.getCertificateUrl())
                     .createdAt(cert.getCreatedAt())
                     .fullName(fullName)
