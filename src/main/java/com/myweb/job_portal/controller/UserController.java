@@ -1,20 +1,21 @@
 package com.myweb.job_portal.controller;
 
 import com.myweb.job_portal.dto.UserDTO;
-import com.myweb.job_portal.dto.request.ChangeImageRequest;
-import com.myweb.job_portal.dto.request.ChangePasswordRequest;
-import com.myweb.job_portal.dto.request.LoginRequest;
+import com.myweb.job_portal.dto.request.*;
 import com.myweb.job_portal.entity.Users;
 import com.myweb.job_portal.enums.UserRole;
 import com.myweb.job_portal.enums.UserStatus;
 import com.myweb.job_portal.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.catalina.User;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.io.IOException;
 
@@ -92,6 +93,49 @@ public class UserController {
         }
 
     }
+
+    @PostMapping("/register/candidate")
+    public ResponseEntity<?> registerCandidate(@RequestBody CandidateRegisterRequest request) {
+        try {
+            userService.registerCandidate(request);
+            return ResponseEntity.ok("Đăng ký tài khoản thành công!");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping(
+            value = "/register/company",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> registerCompany(
+            @RequestPart("data") CompanyRegisterRequest request,
+            @RequestPart("imageLicense") MultipartFile imageLicense) {
+
+        try {
+            userService.registerCompany(request, imageLicense);
+            return ResponseEntity.ok("Đăng ký tài khoản thành công!");
+        }
+        catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping(value = "/register/count", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> registerCompany(HttpServletRequest request) throws Exception {
+
+        System.out.println("FILE COUNT = " + request.getParts().size());
+
+        return ResponseEntity.ok("OK");
+    }
+
+//    @PostMapping(value = "/register/company", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public ResponseEntity<?> registerCompany(HttpServletRequest request) throws Exception {
+//
+//        System.out.println("FILE COUNT = " + request.getParts().size());
+//
+//        return ResponseEntity.ok("OK");
+//    }
+
 
 //    private ResponseEntity<?> handleLoginResult(Users user) {
 //        if (user != null) {

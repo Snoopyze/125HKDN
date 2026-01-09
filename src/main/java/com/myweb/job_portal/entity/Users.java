@@ -43,6 +43,9 @@ public class Users {
     @Column(name = "update_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "gender", nullable = false)
+    private Integer gender;
+
     @OneToOne(mappedBy = "users", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private CandidateProfiles candidateProfile;
