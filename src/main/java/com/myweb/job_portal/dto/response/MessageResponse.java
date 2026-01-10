@@ -1,5 +1,6 @@
 package com.myweb.job_portal.dto.response;
 
+import com.myweb.job_portal.entity.Message;
 import com.myweb.job_portal.enums.MessageTypeEnum;
 import lombok.*;
 
