@@ -21,14 +21,6 @@ public class ConversationController {
 //        return conversationService.getMyConversations();
 //    }
 
-    @GetMapping("/{conversationId}/messages")
-    public Object getMessages(
-            @PathVariable("conversationId") Long conversationId,
-            @RequestParam int page,
-            @RequestParam int size) {
-        return messageService.getMessages(conversationId, page, size);
-    }
-
     @PutMapping("/{conversationId}/read")
     public void markAsread(@PathVariable("conversationId") Long conversationId) {
         messageService.markAsread(conversationId);

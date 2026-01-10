@@ -1,5 +1,6 @@
 package com.myweb.job_portal.dto.response;
 
+import com.myweb.job_portal.enums.MessageTypeEnum;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -16,4 +17,5 @@ public class MessageResponse {
     private String content;
     private boolean isRead;
     private LocalDateTime createdAt;
+    private MessageTypeEnum messageType;
 }
