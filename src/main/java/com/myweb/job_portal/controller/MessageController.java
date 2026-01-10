@@ -64,4 +64,10 @@ public class MessageController {
             return e.getMessage();
         }
     }
+
+    @PutMapping("/{conversationId}/read")
+    public void markAsread(@PathVariable("conversationId") Long conversationId) {
+        messageService.markAsread(conversationId);
+    }
+
 }

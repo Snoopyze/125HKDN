@@ -211,15 +211,5 @@ public class MessageService {
         messageRepository.markMessagesAsRead(conversationId, userId);
     }
 
-    private MessageResponse toResponse(Message message) {
-        return MessageResponse.builder()
-                .id(message.getId())
-                .senderId(message.getSender().getId())
-                .content(message.getContent())
-                .isRead(message.getIsRead())
-                .createdAt(message.getCreatedAt())
-                .messageType(message.getMessageTypeEnum())
-                .build();
-    }
 
 }

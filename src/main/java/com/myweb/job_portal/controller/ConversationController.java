@@ -16,16 +16,6 @@ public class ConversationController {
     private final ConversationService conversationService;
     private final MessageService messageService;
 
-//    @GetMapping
-//    public Object getAllConversations() {
-//        return conversationService.getMyConversations();
-//    }
-
-    @PutMapping("/{conversationId}/read")
-    public void markAsread(@PathVariable("conversationId") Long conversationId) {
-        messageService.markAsread(conversationId);
-    }
-
     @GetMapping("/all-conversation")
     public List<ConversationLastMessageDTO> getCandidateConversations() {
         return conversationService.getMyConversationsLastMessage();

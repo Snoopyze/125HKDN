@@ -39,5 +39,7 @@ public interface MessageRepository extends JpaRepository<Message,Long> {
           AND m.sender.id <> :userId
           AND m.isRead = false
     """)
-    void markMessagesAsRead(Long conversationId, Long senderId);
+    void markMessagesAsRead(
+           @Param("conversationId") Long conversationId,
+           @Param("userId") Long senderId);
 }
