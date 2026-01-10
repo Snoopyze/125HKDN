@@ -59,10 +59,10 @@ public class MessageService {
 
         return toResponse(message);
     }
-    
+
     public Page<Message> getMessages(Long conversationId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return messageRepository.findByConversationIdOrderByCreatedAtAsc(conversationId, pageable);
+        return messageRepository.findMess(conversationId, pageable);
     }
 
     @Transactional
