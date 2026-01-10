@@ -49,4 +49,19 @@ public class MessageController {
             return e.getMessage();
         }
     }
+
+    @PostMapping(
+            value = "/send-message/file",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public Object sendMessageFile(@ModelAttribute SendFileMessageRequest request) {
+        try {
+            return messageService.sendMessageFile(
+                    request.getConversationId(),
+                    request.getContent()
+            );
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+    }
 }
