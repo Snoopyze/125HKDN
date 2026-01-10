@@ -1,5 +1,7 @@
 package com.myweb.job_portal.service;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.myweb.job_portal.dto.MessageHistoryDTO;
 import com.myweb.job_portal.dto.request.SendMessageRequest;
 import com.myweb.job_portal.dto.response.MessageResponse;
@@ -20,9 +22,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -33,6 +39,7 @@ public class MessageService {
     private final ConversationRepository conversationRepository;
     private final UserRepository userRepository;
     private final CurrentUserUtil currentUserUtil;
+    private final Cloudinary cloudinary;
 
 
 
@@ -62,7 +69,7 @@ public class MessageService {
 //        return toResponse(message);
 //    }
 
-    public String sendMessageText(Long conversationId, String content) {
+    public Message sendMessageText(Long conversationId, String content) {
         Long userId = currentUserUtil.getCurrentUserId();
         Conversation conversation = conversationRepository
                 .findById(conversationId)
@@ -80,8 +87,49 @@ public class MessageService {
                 .isRead(false)
                 .createdAt(LocalDateTime.now())
                 .build();
-        messageRepository.save(message);
-        return "Gửi tin nhắn thành công";
+        return messageRepository.save(message);
+    }
+
+    public Message sendMessageImage(Long conversationId, MultipartFile content) {
+        if (content == null || content.isEmpty()) {
+            throw new RuntimeException("File ảnh không được để trống");
+        }
+        String contentType = content.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new RuntimeException("Chỉ cho phép upload file ảnh");
+        }
+        String publicId = UUID.randomUUID().toString();
+        String imageUrl;
+        try {
+            Map uploadResult = cloudinary.uploader().upload(
+                    content.getBytes(),
+                    ObjectUtils.asMap(  "resource_type", "image",
+                            "folder", "messages/images",
+                            "public_id", publicId)
+            );
+            imageUrl = uploadResult.get("secure_url").toString();
+        } catch (IOException e) {
+            throw new RuntimeException("Upload fail");
+        }
+
+        Long userId = currentUserUtil.getCurrentUserId();
+        Conversation conversation = conversationRepository
+                .findById(conversationId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy cuộc hội thoại"));
+
+        Users user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người gửi"));
+
+        Message message = Message.builder()
+                .sender(user)
+                .conversation(conversation)
+                .content(imageUrl)
+                .messageTypeEnum(MessageTypeEnum.image)
+                .isRead(false)
+                .createdAt(LocalDateTime.now())
+                .build();
+        return messageRepository.save(message);
     }
 
     public Page<MessageHistoryDTO> getMessages(Long conversationId, int page, int size) {

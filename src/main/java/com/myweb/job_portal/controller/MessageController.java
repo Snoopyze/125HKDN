@@ -1,11 +1,10 @@
 package com.myweb.job_portal.controller;
 
+import com.myweb.job_portal.dto.request.SendFileMessageRequest;
 import com.myweb.job_portal.dto.request.SendMessageRequest;
-import com.myweb.job_portal.entity.Message;
-import com.myweb.job_portal.enums.MessageTypeEnum;
-import com.myweb.job_portal.repository.MessageRepository;
 import com.myweb.job_portal.service.MessageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,9 +24,24 @@ public class MessageController {
 
 
     @PostMapping("/send-message/text")
-    public Object sendMessage(@RequestBody SendMessageRequest request) {
+    public Object sendMessageText(@RequestBody SendMessageRequest request) {
         try {
             return messageService.sendMessageText(
+                    request.getConversationId(),
+                    request.getContent()
+            );
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+    }
+
+    @PostMapping(
+            value = "/send-message/image",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public Object sendMessageImage(@ModelAttribute SendFileMessageRequest request) {
+        try {
+            return messageService.sendMessageImage(
                     request.getConversationId(),
                     request.getContent()
             );
