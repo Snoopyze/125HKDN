@@ -10,7 +10,7 @@ public class CurrentUserUtil {
     private final HttpServletRequest request;
 
     public Long getCurrentUserId() {
-        String userId = request.getHeader("sender-id");
+        String userId = request.getHeader("currentUserId");
         return userId != null ? Long.parseLong(userId) : null;
     }
 
