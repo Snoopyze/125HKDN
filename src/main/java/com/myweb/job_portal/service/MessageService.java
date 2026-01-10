@@ -125,7 +125,7 @@ public class MessageService {
                 .sender(user)
                 .conversation(conversation)
                 .content(imageUrl)
-                .messageTypeEnum(MessageTypeEnum.text)
+                .messageTypeEnum(MessageTypeEnum.image)
                 .isRead(false)
                 .createdAt(LocalDateTime.now())
                 .build();
