@@ -2,6 +2,7 @@ package com.myweb.job_portal.controller;
 
 import com.myweb.job_portal.dto.request.SendMessageRequest;
 import com.myweb.job_portal.entity.Message;
+import com.myweb.job_portal.enums.MessageTypeEnum;
 import com.myweb.job_portal.repository.MessageRepository;
 import com.myweb.job_portal.service.MessageService;
 import lombok.RequiredArgsConstructor;
@@ -23,11 +24,15 @@ public class MessageController {
     }
 
 
-    @PostMapping
-    public Object sendMessage(@RequestBody SendMessageRequest request, Long senderId) {
-        return messageService.sendMessage(
-                request,
-                senderId
-        );
+    @PostMapping("/send-message/text")
+    public Object sendMessage(@RequestBody SendMessageRequest request) {
+        try {
+            return messageService.sendMessageText(
+                    request.getConversationId(),
+                    request.getContent()
+            );
+        } catch (Exception e) {
+            return e.getMessage();
+        }
     }
 }

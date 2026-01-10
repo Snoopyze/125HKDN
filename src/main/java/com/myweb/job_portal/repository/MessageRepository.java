@@ -1,5 +1,6 @@
 package com.myweb.job_portal.repository;
 
+import com.myweb.job_portal.dto.MessageHistoryDTO;
 import com.myweb.job_portal.entity.Message;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +26,7 @@ public interface MessageRepository extends JpaRepository<Message,Long> {
         where m.conversation.id = :conversationId
         order by m.createdAt asc 
 """)
-    Page<Message> findMess(
+    Page<MessageHistoryDTO> findMess(
             @Param("conversationId") Long conversationId,
             Pageable pageable
     );

@@ -1,5 +1,6 @@
 package com.myweb.job_portal.service;
 
+import com.myweb.job_portal.dto.MessageHistoryDTO;
 import com.myweb.job_portal.dto.request.SendMessageRequest;
 import com.myweb.job_portal.dto.response.MessageResponse;
 import com.myweb.job_portal.entity.Conversation;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,33 +36,55 @@ public class MessageService {
 
 
 
-    public MessageResponse sendMessage( SendMessageRequest request, Long senderId) {
-
+//    public MessageResponse sendMessage( SendMessageRequest request, Long senderId) {
+//
 //        Long userId = currentUserUtil.getCurrentUserId();
+//
+//        Conversation conversation = conversationRepository
+//                .findById(request.getConversationId())
+//                .orElseThrow(() -> new RuntimeException("Không tìm thấy cuộc hội thoại"));
+//
+//        Users sender = Users.builder()
+//                .id(senderId)
+//                .build();
+//
+//        Message message = Message.builder()
+//                .sender(sender)
+//                .conversation(conversation)
+//                .content(request.getContent())
+//                .messageTypeEnum(MessageTypeEnum.text)
+//                .isRead(false)
+//                .createdAt(LocalDateTime.now())
+//                .build();
+//
+//        messageRepository.save(message);
+//
+//        return toResponse(message);
+//    }
 
+    public String sendMessageText(Long conversationId, String content) {
+        Long userId = currentUserUtil.getCurrentUserId();
         Conversation conversation = conversationRepository
-                .findById(request.getConversationId())
+                .findById(conversationId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy cuộc hội thoại"));
 
-        Users sender = Users.builder()
-                .id(senderId)
-                .build();
+        Users user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người gửi"));
 
         Message message = Message.builder()
-                .sender(sender)
+                .sender(user)
                 .conversation(conversation)
-                .content(request.getContent())
+                .content(content)
                 .messageTypeEnum(MessageTypeEnum.text)
                 .isRead(false)
                 .createdAt(LocalDateTime.now())
                 .build();
-
         messageRepository.save(message);
-
-        return toResponse(message);
+        return "Gửi tin nhắn thành công";
     }
 
-    public Page<Message> getMessages(Long conversationId, int page, int size) {
+    public Page<MessageHistoryDTO> getMessages(Long conversationId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         return messageRepository.findMess(conversationId, pageable);
     }
