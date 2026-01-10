@@ -12,7 +12,9 @@ import com.myweb.job_portal.repository.UserRepository;
 import com.myweb.job_portal.utils.CurrentUserUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,13 +59,10 @@ public class MessageService {
 
         return toResponse(message);
     }
-
-    public List<MessageResponse> getMessages(Long conversationId, int page, int size) {
-        return messageRepository.findByConversationIdOrderByCreatedAtAsc(
-                conversationId,
-                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
-        ).map(this::toResponse).toList();
-
+    
+    public Page<Message> getMessages(Long conversationId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return messageRepository.findByConversationIdOrderByCreatedAtAsc(conversationId, pageable);
     }
 
     @Transactional
@@ -79,6 +78,7 @@ public class MessageService {
                 .content(message.getContent())
                 .isRead(message.getIsRead())
                 .createdAt(message.getCreatedAt())
+                .messageType(message.getMessageTypeEnum())
                 .build();
     }
 
