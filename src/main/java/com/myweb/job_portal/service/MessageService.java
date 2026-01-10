@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
@@ -41,7 +42,38 @@ public class MessageService {
     private final CurrentUserUtil currentUserUtil;
     private final Cloudinary cloudinary;
 
+    private static final Set<String> ALLOWED_EXTENSIONS = Set.of(
+            "jpg", "jpeg", "png", "gif",
+            "pdf", "doc", "docx",
+            "xls", "xlsx",
+            "zip", "rar"
+    );
 
+    private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+
+    private void validateFile(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new RuntimeException("File không được để trống");
+        }
+
+        if (file.getSize() > MAX_FILE_SIZE) {
+            throw new RuntimeException("File vượt quá dung lượng cho phép (10MB)");
+        }
+
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || !originalFilename.contains(".")) {
+            throw new RuntimeException("Tên file không hợp lệ");
+        }
+
+        String extension = originalFilename
+                .substring(originalFilename.lastIndexOf('.') + 1)
+                .toLowerCase();
+
+        if (!ALLOWED_EXTENSIONS.contains(extension)) {
+            throw new RuntimeException("Định dạng file không được hỗ trợ");
+        }
+    }
 
 //    public MessageResponse sendMessage( SendMessageRequest request, Long senderId) {
 //
@@ -126,6 +158,42 @@ public class MessageService {
                 .conversation(conversation)
                 .content(imageUrl)
                 .messageTypeEnum(MessageTypeEnum.image)
+                .isRead(false)
+                .createdAt(LocalDateTime.now())
+                .build();
+        return messageRepository.save(message);
+    }
+
+    public Message sendMessageFile(Long conversationId, MultipartFile content) {
+        validateFile(content);
+        String publicId = UUID.randomUUID().toString();
+        String imageUrl;
+        try {
+            Map uploadResult = cloudinary.uploader().upload(
+                    content.getBytes(),
+                    ObjectUtils.asMap(  "resource_type", "auto",
+                            "folder", "messages/files",
+                            "public_id", publicId)
+            );
+            imageUrl = uploadResult.get("secure_url").toString();
+        } catch (IOException e) {
+            throw new RuntimeException("Upload fail");
+        }
+
+        Long userId = currentUserUtil.getCurrentUserId();
+        Conversation conversation = conversationRepository
+                .findById(conversationId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy cuộc hội thoại"));
+
+        Users user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người gửi"));
+
+        Message message = Message.builder()
+                .sender(user)
+                .conversation(conversation)
+                .content(imageUrl)
+                .messageTypeEnum(MessageTypeEnum.file)
                 .isRead(false)
                 .createdAt(LocalDateTime.now())
                 .build();
