@@ -6,12 +6,27 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MessageRepository extends JpaRepository<Message,Long> {
-    Page<Message> findByConversationIdOrderByCreatedAtAsc(
-            Long conversationId,
+    @Query("""
+        select new com.myweb.job_portal.dto.MessageHistoryDTO(
+            m.id,
+            u.id,
+            m.content,
+            m.messageTypeEnum,
+            m.isRead,
+            m.createdAt
+        )
+        from Message m
+        join m.sender u
+        where m.conversation.id = :conversationId
+        order by m.createdAt asc 
+""")
+    Page<Message> findMess(
+            @Param("conversationId") Long conversationId,
             Pageable pageable
     );
 
